@@ -7,10 +7,21 @@
 	<script src="moment.js"></script>
 	<script src="drawing.js" canvas="canvas" type="text/paperscript"></script>
 	<script src="data.js"></script>
+	<style>
+		body {
+			background: #000;
+			color: #fff;
+		}
+		.mood {
+			position: absolute;
+			right: 15px;
+			top: 15px;
+		}
+	</style>
 </head>
 <body>
 	<div class="date" style="position:absolute"></div>	
-	<div class="mood" style="position:absolute;top:30px"></div>	
+	<div class="mood" style=""></div>	
 	<canvas id="canvas" resize></canvas>
 </body>
 </html>
