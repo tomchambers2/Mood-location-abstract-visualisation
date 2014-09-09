@@ -10,12 +10,15 @@ function createMood(data) {
 }
 
 function convert(lat, lng) {
-	var x = (lng + 180) * (view.bounds.width / 360);
-	var y = ((-1 * lat) + 90) * (view.bounds.height / 180);
+	//var x = (lng + 180) * (view.bounds.width / 360);
+	//var y = ((-1 * lat) + 90) * (view.bounds.height / 180);
+
+	var x = (lat - 50) * 100;
+	var y = Math.abs(lng) * 100;
 	return {x:x,y:y};
 }
 
-function changeLine(color,width,smooth) {
+function changeLine(color,width,line) {
 	line.strokeColor = color;
 	line.fillColor = null;
 	line.strokeWidth = width;
@@ -30,21 +33,21 @@ var j = 2;
 var dateElement = document.getElementsByClassName('date')[0];
 var moodElement = document.getElementsByClassName('mood')[0];
 
-var line = new Path();
-line.strokeColor = 'black';
-
-line.applyMatrix = false;
-line.scale(3,new Point(0,0));
-line.position = new Point(-1500,-100);
-
 var paths = new Group();
-paths.applyMatrix = false;
-paths.scale(2);
+//paths.applyMatrix = false; not needed unless applying scaling
+
+var bigPath = new Path();
+bigPath.moveTo(new Point(500,500));
+bigPath.moveTo(new Point(600,600));
+bigPath.strokeColor = 'white';
+bigPath.strokeWidth = 3;
+bigPath.fillColor = 'blue';
 
 function onFrame(event) {
-	if (event.count > 100) return;
+	//if (event.count > 100) return;
 	if (coords.data && mood.data) {
-		date += 1000000;
+		//date += 1000000; //this is the standard slow moving date
+		date += 1000000; //fast date for testing
 		dateElement.innerHTML = moment(date).format('Do MMMM YYYY, ha');
 
 		var loadedTrackTime = moment(coords.data[i][0]+' '+coords.data[i][1]); //this is the undrawn track. if we pass its date, draw it
@@ -55,49 +58,70 @@ function onFrame(event) {
 		mood.seconds = mood.data[j][4].split('"')[1];
 		mood.currentDate = moment(mood.date+' '+mood.hours+':'+mood.minutes+':'+mood.seconds);
 
-		if (moment(date).isAfter(mood.currentDate)) {
-			moodElement.innerHTML = mood.data[j][5].split('"')[1];
-			var currentMood = mood.data[j][5].split('"')[1];
-			switch (currentMood) {
+		function changeMood(line) {
+			if (moment(date).isAfter(mood.currentDate)) {
+				moodElement.innerHTML = mood.data[j][5].split('"')[1];
+				mood.currentMood = mood.data[j][5].split('"')[1];
+				j++;
+			};
+			switch (mood.currentMood) {
 				case 'Very Bad':
-					changeLine('black',0.5);
+					changeLine('#ED1C11',1,line);
+					//console.log('changed mood very bad');
 					break;
 				case 'Bad':
-					changeLine('grey',1);
+					changeLine('#ED7C38',1,line);
+					//console.log('changed mood bad');
 					break;				
 				case 'Meh':
-					changeLine('blue',2);
+					changeLine('#21ABED',1,line);
+					//console.log('changed mood meh');
 					break;				
 				case 'So-So':
-					changeLine('orange',3);
+					changeLine('#C0ED53',1,line);
+					//console.log('changed mood so-so');
 					break;				
 				case 'Okay':
-					changeLine('green', 4);
+					changeLine('#83ED52',1,line);
+					//console.log('changed mood okay');
 					break;				
 				case 'Good':
-					changeLine('red',40);
-					break;				
+					changeLine('#26ED6D',1,line);
+					//console.log('changed mood good');
+					break;
 			};
-			j++;
 		};
 
 		if (moment(date).isAfter(loadedTrackTime)) {
-			//draw a line from out last point to the new point
-			line = new Path();
-
-
-			//HERE IS THE BUG!!! YOU ARE ADDING A LINE WITH ONLY ONE END, OF COURSE THEY DON'T MATCH UP!!!!
+			var line = new Path();
+			line.strokeColor = '#BCBCBC';
+			changeMood(line);
+			line.add(convert(coords.x,coords.y));
 			coords.x = parseFloat(coords.data[i][3],10);
 			coords.y = parseFloat(coords.data[i][4],10);
-			if (coords.x && coords.y) {
-				line.add(convert(coords.x,coords.y));
-			} else {
-				line.add(convert(coords.x,coords.y));
+			line.add(convert(coords.x,coords.y));
+			paper.view.center = new Point(convert(coords.x,coords.y));
+			//paper.view.zoom = 10;
+			line.smooth();
+			//console.log(convert(coords.x,coords.y));
+
+			bigPath.join(line);
+			/*
+			if (paths.children.length > 3) {
+				line.remove();
+				paths.lastChild.join(line);
+				paths.lastChild.smooth();
+				paths.lastChild.strokeJoin = 'miter';
+				paths.lastChild.strokeCap = 'round';
 			}
-			console.log(convert(coords.x,coords.y));
 			paths.addChild(line);
+
+			console.log(paths.children.length);
+			if (paths.children.length > 600) {
+				//paths.firstChild.remove();
+			}
+			*/
 			i++;
 		};
-		console.log(paths);
 	};
 };
