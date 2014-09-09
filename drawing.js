@@ -34,14 +34,8 @@ var dateElement = document.getElementsByClassName('date')[0];
 var moodElement = document.getElementsByClassName('mood')[0];
 
 var paths = new Group();
-//paths.applyMatrix = false; not needed unless applying scaling
 
-var bigPath = new Path();
-bigPath.moveTo(new Point(500,500));
-bigPath.moveTo(new Point(600,600));
-bigPath.strokeColor = 'white';
-bigPath.strokeWidth = 3;
-bigPath.fillColor = 'blue';
+paper.view.zoom = 10;		
 
 function onFrame(event) {
 	//if (event.count > 100) return;
@@ -65,44 +59,43 @@ function onFrame(event) {
 				j++;
 			};
 			switch (mood.currentMood) {
-				case 'Very Bad':
+				case 'Very bad':
 					changeLine('#ED1C11',1,line);
 					//console.log('changed mood very bad');
 					break;
 				case 'Bad':
-					changeLine('#ED7C38',1,line);
+					changeLine('#ED7C38',1.2,line);
 					//console.log('changed mood bad');
 					break;				
 				case 'Meh':
-					changeLine('#21ABED',1,line);
+					changeLine('#21ABED',1.3,line);
 					//console.log('changed mood meh');
 					break;				
-				case 'So-So':
-					changeLine('#C0ED53',1,line);
+				case 'So-so':
+					changeLine('#C0ED53',1.5,line);
 					//console.log('changed mood so-so');
 					break;				
 				case 'Okay':
-					changeLine('#83ED52',1,line);
+					changeLine('#83ED52',1.75,line);
 					//console.log('changed mood okay');
 					break;				
 				case 'Good':
-					changeLine('#26ED6D',1,line);
+					changeLine('#26ED6D',2,line);
 					//console.log('changed mood good');
 					break;
+				default:
+					changeLine('#BCBCBC',1,line);
 			};
 		};
 
 		if (moment(date).isAfter(loadedTrackTime)) {
 			var line = new Path();
-			line.strokeColor = '#BCBCBC';
 			changeMood(line);
 			line.add(convert(coords.x,coords.y));
 			coords.x = parseFloat(coords.data[i][3],10);
 			coords.y = parseFloat(coords.data[i][4],10);
 			line.add(convert(coords.x,coords.y));
 			paper.view.center = new Point(convert(coords.x,coords.y));
-			paper.view.zoom = 10;
-			line.smooth();
 
 			if (paths.children.length > 1) {
 				line.remove();
@@ -113,7 +106,7 @@ function onFrame(event) {
 			}
 			paths.addChild(line);
 
-			console.log(paths.children.length);
+			//console.log(paths.children.length);
 			if (paths.children.length > 600) {
 				paths.firstChild.remove();
 			}

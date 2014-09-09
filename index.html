@@ -2,8 +2,9 @@
 <html lang="en">
 <head>
 	<meta charset="UTF-8">
-	<title>Document</title>
+	<title>Mood visualisation</title>
 	<script src="http://cdnjs.cloudflare.com/ajax/libs/paper.js/0.9.18/paper-full.min.js"></script>
+	<link href='http://fonts.googleapis.com/css?family=Questrial' rel='stylesheet' type='text/css'>
 	<script src="moment.js"></script>
 	<script src="drawing.js" canvas="canvas" type="text/paperscript"></script>
 	<script src="data.js"></script>
@@ -11,17 +12,22 @@
 		body {
 			background: #000;
 			color: #fff;
+			font-family: 'Questrial', sans-serif;
+			font-size: 30px;
 		}
 		.mood {
 			position: absolute;
 			right: 15px;
-			top: 15px;
+			top: 7px;
+		}
+		.date {
+			position: absolute;
 		}
 	</style>
 </head>
 <body>
-	<div class="date" style="position:absolute"></div>	
-	<div class="mood" style=""></div>	
-	<canvas id="canvas" resize></canvas>
+	<div class="date"></div>	
+	<div class="mood"></div>	
+	<canvas id="canvas" resize keepalive="true"></canvas>
 </body>
 </html>
