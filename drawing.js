@@ -101,13 +101,10 @@ function onFrame(event) {
 			coords.y = parseFloat(coords.data[i][4],10);
 			line.add(convert(coords.x,coords.y));
 			paper.view.center = new Point(convert(coords.x,coords.y));
-			//paper.view.zoom = 10;
+			paper.view.zoom = 10;
 			line.smooth();
-			//console.log(convert(coords.x,coords.y));
 
-			bigPath.join(line);
-			/*
-			if (paths.children.length > 3) {
+			if (paths.children.length > 1) {
 				line.remove();
 				paths.lastChild.join(line);
 				paths.lastChild.smooth();
@@ -118,9 +115,8 @@ function onFrame(event) {
 
 			console.log(paths.children.length);
 			if (paths.children.length > 600) {
-				//paths.firstChild.remove();
+				paths.firstChild.remove();
 			}
-			*/
 			i++;
 		};
 	};
